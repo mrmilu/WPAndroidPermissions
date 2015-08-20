@@ -4,10 +4,8 @@ Android Marshmallow permissions made easy
 
 Works flawlessly on:
 
-	````
 	android.support.v7.app.AppCompatActivity extended classes
 	android.support.v4.app.Fragment extended classes
-	````
 
 ###USAGE:
 
@@ -33,7 +31,7 @@ Works flawlessly on:
 3. Add annotations with the desired permissions
 
 	````
-	@HasRuntimePermissions //at class level
+	@HasRuntimePermissions // at class level
 	
 	@NeedPermissions(Manifest.permission.YOUR_PERMISSION) // at function level
 	````
