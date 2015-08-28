@@ -5,11 +5,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.webpartners.wpandroidpermissions.annotations.HasRuntimePermissions;
 import org.webpartners.wpandroidpermissions.annotations.NeedPermissions;
 import org.webpartners.wpandroidpermissions.interfaces.PermissionRequestResponse;
-import org.webpartners.wpandroidpermissions.processor.PermissionParser;
 
 @HasRuntimePermissions
 public class MainActivity extends AppCompatActivity implements PermissionRequestResponse {
@@ -18,12 +18,12 @@ public class MainActivity extends AppCompatActivity implements PermissionRequest
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PermissionParser.getInstance().parse(this);
+        openCamera();
     }
 
     @NeedPermissions(Manifest.permission.CAMERA)
     public void openCamera() {
-        Log.d(getString(R.string.app_name), "IT WORKS!");
+        Toast.makeText(this, "IT WORKS!", Toast.LENGTH_LONG).show();
     }
 
     @Override

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Created by Jorge Garrido Oval on 18/08/15.
  */
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface NeedPermissions {
     String value();
