@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ActivityWithPermission" />
+        <activity android:name=".ActivityFragmentHost" />
+        <activity android:name=".ActivityWithPermission_Generated" />
+        <activity android:name=".ActivityFragmentHost_Generated" />
     </application>
 
 </manifest>

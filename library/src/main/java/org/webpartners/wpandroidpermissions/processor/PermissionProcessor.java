@@ -7,11 +7,8 @@ import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
-import org.webpartners.wpandroidpermissions.annotations.HasFragmentsWithPermissions;
-import org.webpartners.wpandroidpermissions.annotations.HasRuntimePermissions;
-import org.webpartners.wpandroidpermissions.annotations.NeedPermissions;
-import org.webpartners.wpandroidpermissions.interfaces.AskForPermission;
-import org.webpartners.wpandroidpermissions.interfaces.PermissionRequestResponse;
+import org.webpartners.wpandroidpermissions.annotations.*;
+import org.webpartners.wpandroidpermissions.interfaces.*;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -27,6 +24,7 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 
 @AutoService(Processor.class)
 public class PermissionProcessor extends AbstractProcessor {
@@ -43,24 +41,46 @@ public class PermissionProcessor extends AbstractProcessor {
     }
 
     @Override
-    public boolean process(Set<? extends TypeElement> annotaions, RoundEnvironment env) {
-        Set<? extends Element> elements = env.getElementsAnnotatedWith(HasRuntimePermissions.class);
-        for (Element element : elements) {
-            JavaFile javaFile = this.createFragment((TypeElement) element);
-            try {
-                javaFile.writeTo(filer);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public Set<String> getSupportedAnnotationTypes() {
+        return ImmutableSet.of(
+                ActivityWithRuntimePermissions.class.getCanonicalName(),
+                FragmentWithRuntimePermissions.class.getCanonicalName(),
+                HostFragmentWithPermissions.class.getCanonicalName());
+    }
 
-        elements.clear();
-        elements = env.getElementsAnnotatedWith(HasFragmentsWithPermissions.class);
-        for (Element element : elements) {
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
+
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment env) {
+        for (Element element :  env.getElementsAnnotatedWith(ActivityWithRuntimePermissions.class)) {
             JavaFile javaFile = this.createActivity((TypeElement) element);
             try {
                 javaFile.writeTo(filer);
             } catch (Exception e) {
+                messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        for (Element element : env.getElementsAnnotatedWith(FragmentWithRuntimePermissions.class)) {
+            JavaFile javaFile = this.createFragment((TypeElement) element);
+            try {
+                javaFile.writeTo(filer);
+            } catch (Exception e) {
+                messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        for (Element element : env.getElementsAnnotatedWith(HostFragmentWithPermissions.class)) {
+            JavaFile javaFile = this.createHostActivity((TypeElement) element);
+            try {
+                javaFile.writeTo(filer);
+            } catch (Exception e) {
+                messager.printMessage(Diagnostic.Kind.ERROR, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -68,7 +88,9 @@ public class PermissionProcessor extends AbstractProcessor {
         return true;
     }
 
-    private MethodSpec addOnRequestPermissionResultMethod(String methodLiteral) {
+    private MethodSpec addOnRequestPermissionResultMethod() {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generating addOnRequestPermissionResultMethod");
+
         return MethodSpec.methodBuilder("onRequestPermissionsResult")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
@@ -88,6 +110,8 @@ public class PermissionProcessor extends AbstractProcessor {
     }
 
     private MethodSpec addCheckPermissionMethod(boolean isActivity) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generating addCheckPermissionMethod");
+
         return MethodSpec.methodBuilder("askForPermission")
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(Override.class)
@@ -110,7 +134,9 @@ public class PermissionProcessor extends AbstractProcessor {
                 .build();
     }
 
-    private ArrayList<MethodSpec> cloneMethodsWithPermissions(TypeElement typeElement) {
+    private ArrayList<MethodSpec> cloneMethodsWithPermissions(TypeElement typeElement, boolean isActivity) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Generating cloneMethodsWithPermissions");
+
         ArrayList<MethodSpec> methods = new ArrayList<>();
         for (Element elem :typeElement.getEnclosedElements()) {
             NeedPermissions annotation = elem.getAnnotation(NeedPermissions.class);
@@ -143,11 +169,12 @@ public class PermissionProcessor extends AbstractProcessor {
                         .build();
 
                 // extend
-                methods.add(MethodSpec.methodBuilder(elem.getSimpleName().toString()+"_generated")
+                String root = (isActivity)? "this" :  "getActivity()";
+                methods.add(MethodSpec.methodBuilder(elem.getSimpleName().toString() + "_generated")
                         .addModifiers(elem.getModifiers())
                         .addParameter(TypeName.BOOLEAN, "permissionChecked")
                         .returns(void.class)
-                        .addStatement("if (!permissionChecked) ((org.webpartners.wpandroidpermissions.interfaces.AskForPermission)getActivity()).askForPermission($S, $L)", annotation.value(), callback)
+                        .addStatement("if (!permissionChecked) ((org.webpartners.wpandroidpermissions.interfaces.AskForPermission)$L).askForPermission($S, $L)", root, annotation.value(), callback)
                         .addStatement("else super.$N()", elem.getSimpleName())
                         .build());
                 methodLiteral = "this." + elem.getSimpleName().toString() + "_generated(true)";
@@ -173,6 +200,7 @@ public class PermissionProcessor extends AbstractProcessor {
     }
 
     private TypeSpec createExtendedFragment(TypeElement typeElement, ArrayList<MethodSpec> methods) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Saving extended fragment file...");
         return TypeSpec.classBuilder(typeElement.getSimpleName() + "_Generated")
                 .addModifiers(Modifier.PUBLIC)
                 .superclass(TypeName.get(typeElement.asType()))
@@ -181,7 +209,8 @@ public class PermissionProcessor extends AbstractProcessor {
                 .build();
     }
 
-    private TypeSpec createExtendedActivity(TypeElement typeElement, ArrayList<MethodSpec> methods) {
+    private TypeSpec createExtendedHostActivity(TypeElement typeElement, ArrayList<MethodSpec> methods) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Saving host activity file...");
         return TypeSpec.classBuilder(typeElement.getSimpleName() + "_Generated")
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .superclass(TypeName.get(typeElement.asType()))
@@ -190,40 +219,70 @@ public class PermissionProcessor extends AbstractProcessor {
                 .build();
     }
 
+    private TypeSpec createExtendedActivity(TypeElement typeElement, ArrayList<MethodSpec> methods) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Saving extended activity file...");
+        return TypeSpec.classBuilder(typeElement.getSimpleName() + "_Generated")
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .superclass(TypeName.get(typeElement.asType()))
+                .addSuperinterface(AskForPermission.class)
+                .addSuperinterface(PermissionRequestResponse.class)
+                .addMethods(methods)
+                .build();
+    }
+
     private JavaFile createFragment(TypeElement typeElement) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Creating fragment...");
+
         ArrayList<MethodSpec> methods = new ArrayList<>();
 
-        methods.addAll(this.cloneMethodsWithPermissions(typeElement));
+        methods.addAll(this.cloneMethodsWithPermissions(typeElement, false));
 
         TypeSpec myClass = this.createExtendedFragment(typeElement, methods);
 
+        messager.printMessage(Diagnostic.Kind.NOTE, "Save location: " +
+                typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""));
         return JavaFile.builder(
                 typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""),
                 myClass).build();
     }
 
     private JavaFile createActivity(TypeElement typeElement) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Creating activity...");
+
         ArrayList<MethodSpec> methods = new ArrayList<>();
 
-        methods.add(this.addOnRequestPermissionResultMethod(this.methodLiteral));
+        methods.addAll(this.cloneMethodsWithPermissions(typeElement, true));
+
+        methods.add(this.addOnRequestPermissionResultMethod());
 
         methods.add(this.addCheckPermissionMethod(true));
 
         TypeSpec myClass = this.createExtendedActivity(typeElement, methods);
 
+        messager.printMessage(Diagnostic.Kind.NOTE, "Save location: " +
+                typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""));
         return JavaFile.builder(
                 typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""),
                 myClass).build();
     }
 
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        return ImmutableSet.of(HasRuntimePermissions.class.getCanonicalName(), HasFragmentsWithPermissions.class.getCanonicalName());
+    private JavaFile createHostActivity(TypeElement typeElement) {
+        messager.printMessage(Diagnostic.Kind.NOTE, "Creating host activity...");
+
+        ArrayList<MethodSpec> methods = new ArrayList<>();
+
+        methods.add(this.addOnRequestPermissionResultMethod());
+
+        methods.add(this.addCheckPermissionMethod(true));
+
+        TypeSpec myClass = this.createExtendedHostActivity(typeElement, methods);
+
+        messager.printMessage(Diagnostic.Kind.NOTE, "Save location: " +
+                typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""));
+        return JavaFile.builder(
+                typeElement.getQualifiedName().toString().replace("."+typeElement.getSimpleName(), ""),
+                myClass).build();
     }
 
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latestSupported();
-    }
 }
 
