@@ -26,6 +26,9 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
+/**
+ * Created by Jorge Garrido Oval on 19/08/15.
+ */
 @AutoService(Processor.class)
 public class PermissionProcessor extends AbstractProcessor {
 

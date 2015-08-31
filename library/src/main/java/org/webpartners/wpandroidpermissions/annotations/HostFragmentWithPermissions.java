@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Created by Jorge Garrido Oval on 18/08/15.
+ *
+ * If an Activity hosts Fragment that requires permissions
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)

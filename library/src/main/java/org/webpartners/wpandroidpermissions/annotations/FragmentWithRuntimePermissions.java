@@ -7,6 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Created by Jorge Garrido Oval on 18/08/15.
+ *
+ * At class level for Fragments
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
