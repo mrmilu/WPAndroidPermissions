@@ -18,11 +18,11 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.button)
     public void item1() {
-        startActivity(new Intent(MainActivity.this, ActivityWithPermission.class));
+        startActivity(new Intent(MainActivity.this, ActivityWithPermission_Generated.class));
     }
 
     @OnClick(R.id.button2)
     public void item2() {
-        startActivity(new Intent(MainActivity.this, ActivityFragmentHost.class));
+        startActivity(new Intent(MainActivity.this, ActivityFragmentHost_Generated.class));
     }
 }
