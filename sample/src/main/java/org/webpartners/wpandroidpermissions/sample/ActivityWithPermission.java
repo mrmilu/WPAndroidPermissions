@@ -26,7 +26,7 @@ public class ActivityWithPermission extends AppCompatActivity implements Permiss
     @OnClick(R.id.button)
     @NeedPermissions(Manifest.permission.CAMERA)
     public void openCamera() {
-        Toast.makeText(this, "IT WORKS!", Toast.LENGTH_LONG).show();
+        new ActivityWithPermission_Generated().openCamera();
     }
 
     @Override

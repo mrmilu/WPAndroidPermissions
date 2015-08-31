@@ -34,7 +34,7 @@ public class FragmentWithPermission extends Fragment implements PermissionReques
     @OnClick(R.id.button)
     @NeedPermissions(Manifest.permission.CAMERA)
     public void openCamera() {
-        Toast.makeText(getActivity(), "IT WORKS!", Toast.LENGTH_LONG).show();
+        new FragmentWithPermission_Generated().openCamera();
     }
 
     @Override

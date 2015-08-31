@@ -212,7 +212,7 @@ public class PermissionProcessor extends AbstractProcessor {
     private TypeSpec createExtendedHostActivity(TypeElement typeElement, ArrayList<MethodSpec> methods) {
         messager.printMessage(Diagnostic.Kind.NOTE, "Saving host activity file...");
         return TypeSpec.classBuilder(typeElement.getSimpleName() + "_Generated")
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addModifiers(Modifier.PUBLIC)
                 .superclass(TypeName.get(typeElement.asType()))
                 .addSuperinterface(AskForPermission.class)
                 .addMethods(methods)
@@ -222,7 +222,7 @@ public class PermissionProcessor extends AbstractProcessor {
     private TypeSpec createExtendedActivity(TypeElement typeElement, ArrayList<MethodSpec> methods) {
         messager.printMessage(Diagnostic.Kind.NOTE, "Saving extended activity file...");
         return TypeSpec.classBuilder(typeElement.getSimpleName() + "_Generated")
-                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addModifiers(Modifier.PUBLIC)
                 .superclass(TypeName.get(typeElement.asType()))
                 .addSuperinterface(AskForPermission.class)
                 .addSuperinterface(PermissionRequestResponse.class)

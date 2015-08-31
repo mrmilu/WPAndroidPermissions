@@ -16,7 +16,7 @@ public class ActivityFragmentHost extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_with_fragment);
-        changeFragment(getSupportFragmentManager(), new FragmentWithPermission_Generated());
+        changeFragment(getSupportFragmentManager(), new FragmentWithPermission());
     }
 
     public static void changeFragment(FragmentManager fragmentManager, Fragment targetFragment){
