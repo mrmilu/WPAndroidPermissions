@@ -7,9 +7,7 @@ Works flawlessly on:
 	android.support.v7.app.AppCompatActivity extended classes
 	android.support.v4.app.Fragment extended classes
 
-###USAGE:
-
-1. Gradle
+###GRADLE:
 
 	````
 	repositories {
@@ -18,44 +16,45 @@ Works flawlessly on:
 	    }
 	}
 	dependencies {
-	        compile 'com.github.webpartners:WPAndroidPermissions:1.0'
+	        compile 'com.github.webpartners:WPAndroidPermissions:1.5'
 	}
     ````
 
-2. Get the instance on your onCreate or onCreateView
+###USAGE:
+
+
+1. Add annotations with the desired permissions:
 
 	````
-	PermissionParser.getInstance().parse(this);
-	````
-
-3. Add annotations with the desired permissions
-
-	````
-	@HasRuntimePermissions // at class level
+	@ActivityWithRuntimePermissions // at class level for Activities
+	
+	@FragmentWithRuntimePermissions // at class level for Fragments
+	
+	@HostFragmentWithPermissions // if an Activity hosts Fragment that requires permissions
 	
 	@NeedPermissions(Manifest.permission.YOUR_PERMISSION) // at function level
 	````
+	
+2. Add to the invocation of your Activity/Fragments the suffix: _Generated, like:
 
-4. Implement the callback interface on your classes (AppCompatActivities or Fragments)
+	````
+	startActivity(new Intent(MainActivity.this, ActivityWithPermission_Generated.class));
+	````
+
+
+3. Implement the callback interface on your classes for better permission feedback:
 
 	````
 	MyActivity implements PermissionRequestResponse
 	````
 
-5. Add to your Activity (or in the Activity you added your Fragment)
+###MORE INFO:
 
-	````
-	@Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+	Go to sample module
+	
+###TROUBLESHOOTING:
 
-        if (this instanceof PermissionRequestResponse)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                ((PermissionRequestResponse)this).permissionAllowed();
-            else
-                ((PermissionRequestResponse)this).permissionDenied();
-    }
-    ````
+	By the time, the library is limited to the use of one single permission by activity or fragment
 
 
 ###LICENSE
