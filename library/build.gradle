@@ -1,4 +1,7 @@
 apply plugin: 'java'
+apply plugin: 'com.github.dcendents.android-maven'
+
+group='com.github.webpartners'
 
 dependencies {
     compile 'com.squareup:javapoet:1.2.0'

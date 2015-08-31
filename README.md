@@ -10,12 +10,14 @@ Works flawlessly on:
 ###GRADLE:
 
 	````
-	repositories {
-	    maven {
-	        url "https://jitpack.io"
-	    }
+	allprojects {
+ 		repositories {
+    		...
+    		maven { url "https://jitpack.io" }
+ 		}
 	}
 	dependencies {
+			...
 	        compile 'com.github.webpartners:WPAndroidPermissions:1.5'
 	}
     ````
