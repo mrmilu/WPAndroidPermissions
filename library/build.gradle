@@ -1,7 +1,27 @@
 apply plugin: 'java'
-apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.novoda.bintray-release'
 
-group='com.github.webpartners'
+/* BINTRAY INIT */
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
+
+publish {
+    userOrg = 'firezenk'
+    groupId = 'org.webpartners'
+    artifactId = 'wpandroidpermissions'
+    publishVersion = '1.5'
+    desc = 'Android Marshmallow permissions made easy'
+    website = 'https://github.com/webpartners/WPAndroidPermissions'
+}
+
+/* BINTRAY END */
 
 dependencies {
     compile 'com.squareup:javapoet:1.2.0'

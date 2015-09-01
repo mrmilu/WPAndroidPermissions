@@ -13,12 +13,12 @@ Works flawlessly on:
 	allprojects {
  		repositories {
     		...
-    		maven { url "https://jitpack.io" }
+    		maven { url "https://dl.bintray.com/firezenk/maven/" }
  		}
 	}
 	dependencies {
 			...
-	        compile 'com.github.webpartners:WPAndroidPermissions:1.5'
+	        compile 'org.webpartners.wpandroidpermissions:library:1.5'
 	}
     ````
 
