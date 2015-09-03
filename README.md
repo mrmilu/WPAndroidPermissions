@@ -9,18 +9,14 @@ Works flawlessly on:
 
 ###GRADLE:
 
-	````
-	allprojects {
- 		repositories {
-    		...
-    		maven { url "https://dl.bintray.com/firezenk/maven/" }
- 		}
+ 	repositories {
+	    	...
+	    	jcenter()
 	}
 	dependencies {
-			...
-	        compile 'org.webpartners.wpandroidpermissions:library:1.5'
+		...
+	        compile 'org.webpartners:wpandroidpermissions:1.5'
 	}
-    ````
 
 ###USAGE:
 
