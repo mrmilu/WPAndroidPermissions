@@ -1,4 +1,4 @@
-#WP Android Permissions
+#WP Android Permissions [ ![Download](https://api.bintray.com/packages/firezenk/maven/WPAndroidPermissions/images/download.svg) ](https://bintray.com/firezenk/maven/WPEditText/_latestVersion)
 
 Android Marshmallow permissions made easy
 
