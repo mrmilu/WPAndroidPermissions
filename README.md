@@ -15,7 +15,7 @@ Works flawlessly on:
 	}
 	dependencies {
 		...
-	        compile 'org.webpartners:wpandroidpermissions:1.5'
+	        compile 'org.webpartners:wpandroidpermissions:1.5.1'
 	}
 
 ###USAGE:
