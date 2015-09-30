@@ -16,7 +16,7 @@ publish {
     userOrg = 'firezenk'
     groupId = 'org.webpartners'
     artifactId = 'wpandroidpermissions'
-    publishVersion = '1.5'
+    publishVersion = '1.5.1'
     desc = 'Android Marshmallow permissions made easy'
     website = 'https://github.com/webpartners/WPAndroidPermissions'
 }

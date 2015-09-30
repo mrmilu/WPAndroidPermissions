@@ -126,13 +126,14 @@ public class PermissionProcessor extends AbstractProcessor {
                                 + "\tresponse.permissionAllowed();\n"
                                 + "\treturn;\n}\n\n"
                                 + "android.support.v7.app.AppCompatActivity act = " + ((isActivity) ? "this" : "this.getActivity()") + ";\n"
-                                + "if (act.checkSelfPermission(permission) != android.content.pm.PackageManager.PERMISSION_GRANTED) {\n"
+                                + "int perm = android.support.v4.content.ContextCompat.checkSelfPermission(act, permission);\n"
+                                + "if (perm == android.content.pm.PackageManager.PERMISSION_DENIED) {\n"
                                 + "\tresponse.permissionDenied();\n"
+                                + "\tact.requestPermissions(new String[]{permission}, 20734);\n"
                                 + "\treturn;\n"
-                                + "} else if (act.checkSelfPermission(permission) == android.content.pm.PackageManager.PERMISSION_GRANTED) {\n"
+                                + "} else if (perm == android.content.pm.PackageManager.PERMISSION_GRANTED) {\n"
                                 + "\tresponse.permissionAllowed();\n"
-                                + "\treturn;\n}\n\n"
-                                + "act.requestPermissions(new String[]{permission}, 20734);"
+                                + "\treturn;\n}"
                 )
                 .build();
     }
