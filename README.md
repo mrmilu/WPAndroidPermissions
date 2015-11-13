@@ -11,7 +11,7 @@ Works flawlessly on:
 
  	repositories {
 	    	...
-	    	jcenter()
+	    	maven { url 'https://github.com/FireZenk/maven-repo/raw/master/'}
 	}
 	dependencies {
 		...
